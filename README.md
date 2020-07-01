@@ -16,7 +16,7 @@ After an email is processed, it will be archived and added to the label "haro_pr
 
 ### System Requirements
 
-* Python 2.7, 3.4 or higher
+* Python 2.7, 3.4 or higher (Python3 preferred)
   * `sudo apt-get install python3`
   * `sudo apt-get install python`
 * pip for your python version
