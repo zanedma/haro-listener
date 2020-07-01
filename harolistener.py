@@ -3,7 +3,6 @@
 from __future__ import print_function
 import base64
 import email
-import re
 import pickle
 import os.path
 from time import sleep
@@ -15,7 +14,7 @@ from google.auth.transport.requests import Request
 # project specific imports
 from inboxmanager import initInbox
 from utils import getTime
-import colors
+from colors import *
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = [
@@ -25,7 +24,14 @@ SCOPES = [
 ]
 
 link_keywords = [
-   'yoga' 
+    'yoga',
+    'subscription box',
+    'gift guide',
+    'gift list',
+    'mother\'s day',
+    'valentine\'s day',
+    'mindfulness',
+    'meditation',
 ]
 
 user_email = 'zanedma@gmail.com'
@@ -34,8 +40,8 @@ user_email = 'zanedma@gmail.com'
 def messageLoop(params):
     while True:
         sleep(1800)
-        processMessages(params)
         print('{} Checking for messages...'.format(getTime()))
+        processMessages(params)
 
 
 
@@ -63,18 +69,19 @@ def processMessages(params):
         try:
             response = service.users().messages().get(userId=user_id, id=msg_id, format='raw').execute()
         except Exception as error:
-            colors.printFail("{} Error retrieving message with id {}: {}".format(getTime(), id, error))
+            printFail("{} Error retrieving message with id {}: {}".format(getTime(), id, error))
             return
 
         msg_body = getMessageBody(response['raw'])
 
         found_links = findLinks(str(msg_body))
-        for link in found_links:
-            print(link)
         if len(found_links) > 0:
             notification_response = notify(service, user_id, found_links)
-            if notification_response != None:
-                colors.printGreen('{} Sent message with id {}'.format(getTime(), notification_response['id']))
+            if not notification_response is None:
+                printGreen('{} Sent message with id {}'.format(getTime(), notification_response['id']))
+            else:
+                printFail('{} Error sending notification'.format(getTime()))
+                
 
         markProcessed(service, user_id, msg_id, label_ids)
 
@@ -99,15 +106,16 @@ def findLinks(body):
         end_idx = body.find('{}) '.format(link_num+1))
         if end_idx == -1:
             end_idx = body.find(links_end)
+            if end_idx == -1:
+                break
 
         full_link = body[:end_idx]
-        link_title = full_link[:full_link.find('<')]
-
-        title_list = re.sub('[^a-zA-Z ]', '', link_title).split()
-        for word in title_list:
-            if word.lower() in link_keywords:
-                print(word)
+        link_title = full_link[:full_link.find('<')].lower()
+        for key in link_keywords:
+            if key in link_title:
                 found_links.append(full_link)
+                break
+        
         link_num += 1
 
     return found_links
@@ -118,7 +126,7 @@ def notify(service, user_id, found_links):
     try:
         response = service.users().messages().send(userId=user_id, body=encoded_msg).execute()
     except Exception as error:
-        colors.printFail('{} Error sending notification: {}'.format(getTime(), error))
+        printFail('{} Error sending notification: {}'.format(getTime(), error))
         return None
     return response
 
@@ -136,6 +144,7 @@ def createMessage(found_links):
     raw = raw.decode()
     return {'raw': raw}
 
+
 def markProcessed(service, user_id, msg_id, label_ids):
     label_updates = {
         'addLabelIds': [
@@ -151,7 +160,7 @@ def markProcessed(service, user_id, msg_id, label_ids):
     try:
         response = service.users().messages().modify(userId=user_id, id=msg_id, body=label_updates).execute()
     except Exception as error:
-        colors.printFail('{} Unable to mark message with id {} as processed: {}'.format(getTime(), msg_id, error))
+        printFail('{} Unable to mark message with id {} as processed: {}'.format(getTime(), msg_id, error))
         return None
 
     return response
