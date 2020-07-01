@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from __future__ import print_function
 import pickle
 import os.path
@@ -12,6 +13,7 @@ from utils import getTime
 from email.mime.text import MIMEText
 import colors
 import re
+from time import sleep
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = [
@@ -26,6 +28,14 @@ user_email = 'zanedma@gmail.com'
 
 
 def messageLoop(params):
+    while(1):
+        sleep(1800)
+        processMessages(params)
+        print('{} Checking for messages...'.format(getTime()))
+
+
+
+def processMessages(params):
     service = params['service']
     user_id = params['user_id']
     label_ids = params['labels']
