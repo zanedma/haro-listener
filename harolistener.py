@@ -34,7 +34,8 @@ link_keywords = [
     'meditation',
 ]
 
-user_email = 'zanedma@gmail.com'
+user_email = 'jennifer@buddhiboxes.com'
+notification_email = 'jennifermayfield11@gmail.com'
 
 
 def messageLoop(params):
@@ -137,7 +138,7 @@ def createMessage(found_links):
         msg_text += link
 
     message = MIMEText(msg_text)
-    message['to'] = user_email
+    message['to'] = notification_email
     message['from'] = user_email
     message['subject'] = '[HaroScraper] Found {} links containing keywords'.format(len(found_links))
     raw = base64.urlsafe_b64encode(message.as_bytes())

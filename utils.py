@@ -1,7 +1,5 @@
 import datetime
 import colors
-import base64
-from bs4 import BeautifulSoup
 import sys
 
 def exitWithError(error):
