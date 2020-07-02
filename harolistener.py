@@ -34,8 +34,8 @@ link_keywords = [
     'meditation',
 ]
 
-user_email = 'jennifer@buddhiboxes.com'
-notification_email = 'jennifermayfield11@gmail.com'
+NOTIFICATION_EMAIL = 'jennifer@buddhiboxes.com'
+USER_EMAIL = 'jennifermayfield11@gmail.com'
 
 
 def messageLoop(params):
@@ -104,13 +104,14 @@ def findLinks(body):
             break
         body = body[start_idx:] # less to search through next iteration
 
-        end_idx = body.find('{}) '.format(link_num+1))
+        # end_idx = body.find('{}) '.format(link_num+1))
+        end_idx = body.find('>')
         if end_idx == -1:
-            end_idx = body.find(links_end)
+            end_idx = body.find(links_end + '\n')
             if end_idx == -1:
                 break
 
-        full_link = body[:end_idx]
+        full_link = body[:end_idx+1] + '\n'
         link_title = full_link[:full_link.find('<')].lower()
         for key in link_keywords:
             if key in link_title:
@@ -134,12 +135,12 @@ def notify(service, user_id, found_links):
 
 def createMessage(found_links):
     msg_text = 'The links containing keywords are:\n'
-    for link in found_links:
-        msg_text += link
+    links = '\n'.join(found_links)
+    msg_text += links
 
     message = MIMEText(msg_text)
-    message['to'] = notification_email
-    message['from'] = user_email
+    message['to'] = NOTIFICATION_EMAIL
+    message['from'] = USER_EMAIL
     message['subject'] = '[HaroScraper] Found {} links containing keywords'.format(len(found_links))
     raw = base64.urlsafe_b64encode(message.as_bytes())
     raw = raw.decode()
