@@ -18,7 +18,8 @@ class InboxManager:
             'unprocessed': 'haro_unprocessed',
             'processed': 'haro_processed'
         }
-        self.haro_email = 'haro@helpareporter.com'
+        # self.haro_email = 'haro@helpareporter.com'
+        self.haro_email = 'zanedma@gmail.com'
 
 
     def initInbox(self):

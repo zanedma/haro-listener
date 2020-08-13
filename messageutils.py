@@ -39,7 +39,7 @@ def findLinks(body, link_keys):
                 break
 
         full_link = body[:end_idx+1] + '\n'
-        link_title = full_link[:full_link.fin('<')]
+        link_title = full_link[:full_link.find('<')]
         for key in link_keys:
             if key in link_title.lower():
                 found_links.append(full_link)

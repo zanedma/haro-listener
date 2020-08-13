@@ -143,8 +143,10 @@ def main():
         'service': service,
         'user_id': 'me',
         'link_keys': LINK_KEYS,
-        'notification_email': 'jennifer@buddhiboxes.com',
-        'user_email': 'jennifermayfield11@gmail.com'
+        # 'notification_email': 'jennifer@buddhiboxes.com',
+        'notification_email': 'zanedma@gmail.com',
+        'user_email': 'zanedma@gmail.com'
+        # 'user_email': 'jennifermayfield11@gmail.com'
     }
 
     listener = HaroListener(params)
