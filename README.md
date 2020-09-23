@@ -27,7 +27,26 @@ After an email is processed, it will be archived and added to the label "haro_pr
   * `pip install --upgrade google-api-python-client`
 
 ## Usage
+### Step 1
+The program requires a few arguments that should be put in a file name `args` with the following format:
 
-Running Haro Listener is very easy. Simply open up `Terminal` and type `python3 harolistener.py` and, if prompted, login to your Gmail account and accept all the permissions the program requests. The program will begin logging to the terminal window and, once setup is complete, go into the process of checking for new emails every 30 minutes.
+`notification_email`
 
+`user_email`
+
+`link_key1, link_key2, ..., link_keyN`
+
+
+In other words, line 1 should only contain the email the HARO notification with found links should be sent to. 
+
+Line 2 should only contain the email the HARO emails are sent to and it should be the same email address the user intends to log into in step 2.
+
+Finally, line 3 should contain a comma separated list of link keywords/phrases that the program will search for in HARO emails.
+
+### Step 2
+Running Haro Listener is very easy. Simply open up a `Terminal` and type `python3 harolistener.py` and, if prompted, login to your Gmail account (same account as `user_email` above) and accept all the permissions the program requests. 
+
+The program will begin logging to the terminal window and, once setup is complete, go into the process of checking for new emails every 30 minutes.
+
+### Step 3
 To quit the program, navigate back to the terminal window where you ran it and type `Cmd + C` (mac)/`Ctrl + C` (windows/linux) at the same time.
