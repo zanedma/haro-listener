@@ -52,6 +52,8 @@ class HaroListener:
             msg_ids = self.getMessages()
             if len(msg_ids) > 0:
                 self.processMessages(msg_ids)
+            sleep_time = 1800
+            print('{} Sleeping for {} minutes'.format(getTime(), int(sleep_time/60)))
             sleep(1800)
 
 
@@ -88,6 +90,8 @@ class HaroListener:
             if len(found_links) > 0:
                 print('{} Found {} links containing key words/phrases'.format(getTime(), len(found_links)))
                 self.notify(found_links)
+            else:
+                print('{} Found 0 links containing key words').format(getTime())
 
             self.inbox_manager.markProcessed(msg_id, self.label_ids)
 
@@ -118,7 +122,7 @@ class HaroListener:
         return {'raw': raw_message}
 
 
-def main(argv):
+def main():
     # Establish gmail connection
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
@@ -141,8 +145,11 @@ def main(argv):
 
     service = build('gmail', 'v1', credentials=creds)
     
+    print('{} Establishing params'.format(getTime()))
     params = set_params()
     params['service'] = service
+    params['user_id'] = 'me'
+    printGreen('{} Successfully established params'.format(getTime()))
 
     listener = HaroListener(params)
     listener.messageLoop()
