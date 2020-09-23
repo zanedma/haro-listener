@@ -5,7 +5,7 @@ import os
 import pickle
 from time import sleep
 # project specific imports
-from utils import getTime
+from utils import getTime, set_params
 from colors import printGreen, printFail
 import messageutils
 from inboxmanager import InboxManager
@@ -118,7 +118,8 @@ class HaroListener:
         return {'raw': raw_message}
 
 
-def main():
+def main(argv):
+    # Establish gmail connection
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -139,15 +140,9 @@ def main():
             pickle.dump(creds, token)
 
     service = build('gmail', 'v1', credentials=creds)
-    params = {
-        'service': service,
-        'user_id': 'me',
-        'link_keys': LINK_KEYS,
-        # 'notification_email': 'jennifer@buddhiboxes.com',
-        'notification_email': 'zanedma@gmail.com',
-        'user_email': 'zanedma@gmail.com'
-        # 'user_email': 'jennifermayfield11@gmail.com'
-    }
+    
+    params = set_params()
+    params['service'] = service
 
     listener = HaroListener(params)
     listener.messageLoop()
