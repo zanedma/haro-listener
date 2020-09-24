@@ -5,7 +5,7 @@ import os
 import pickle
 from time import sleep
 # project specific imports
-from utils import getTime, set_params
+from utils import getTime, set_params, exitWithError
 from colors import printGreen, printFail
 import messageutils
 from inboxmanager import InboxManager
@@ -21,25 +21,47 @@ SCOPES = [
     'https://www.googleapis.com/auth/gmail.settings.basic'
 ]
 
-LINK_KEYS = [
-    'yoga',
-    'subscription box',
-    'gift guide',
-    'gift list',
-    'mother\'s day',
-    'valentine\'s day',
-    'mindfulness',
-    'meditation',
-]
 
 class HaroListener:
+    """Manages communication with the Gmail inbox and sending the notification
+    email if any links are found
+
+    @param params Dict: Dictionary that must contain the following key/value
+    pairs:
+        - service Gmail service object: Has established connection to gmail
+        inbox
+        - user_id: Usually the string \'me\', indicating who the notification
+        email message is sent from
+        - link_keys List[string]: List of key words and phrases to search for
+        in HARO emails
+        - notification_email string: Email address to send the notification to
+        - user_email string: Email address that receives the HARO emails to be
+        scrubbed
+    """
     def __init__(self, params):
-        self.service = params['service']
-        self.user_id = params['user_id']
-        self.link_keys = params['link_keys']
-        self.notification_email = params['notification_email']
-        self.user_email = params['user_email']
-        
+        assert isinstance(params, dict), 'params must be of type dict'
+        # set all known parameters
+        if 'service' in params:
+            self.service = params['service']
+        else:
+            exitWithError('missing parameter service')
+        if 'user_id' in params:
+            self.user_id = params['user_id']
+        else:
+            exitWithError('missing parameter user_id')
+        if 'link_keys' in params:
+            self.link_keys = params['link_keys']
+        else:
+            exitWithError('missing parameter link_keys')
+        if 'notification_email' in params:
+            self.notification_email = params['notification_email']
+        else:
+            exitWithError('missing parameter notification_email')
+        if 'user_email' in params:
+            self.user_email = params['user_email']
+        else:
+            exitWithError('missing parameter user_email')
+        # set up inbox filters and labels and set their ids
         self.inbox_manager = InboxManager(self.service, self.user_id)
         ids = self.inbox_manager.initInbox()
         self.label_ids = ids['labels']
@@ -47,6 +69,9 @@ class HaroListener:
 
 
     def messageLoop(self):
+        """Infinite loop that checks the inbox every 30 minutes for new HARO
+        emails to be processed.
+        """
         while True:
             print('{} Checking for messages...'.format(getTime()))
             msg_ids = self.getMessages()
@@ -58,6 +83,10 @@ class HaroListener:
 
 
     def getMessages(self):
+        """Retrieve new messages to be process from the haro_unprocessed label
+
+        @return List[message objects]: list of new messages to be processed
+        """
         # needs service, user_id, label_ids
         label_id = [self.label_ids['unprocessed']]
         try:
@@ -76,6 +105,12 @@ class HaroListener:
 
 
     def processMessages(self, msg_ids):
+        """Process all the messages corresponding to the items in msg_ids for
+        links containing key words/phrases specified in self.link_keys. If any
+        links are found, call self.notify() to notify the notification_email.
+
+        @param msg_ids List[String]: msg_ids obtained from getMessages()
+        """
         for msg_id in msg_ids:
             print('{} Processing message with id {}'.format(getTime(), msg_id))
             try:
@@ -97,6 +132,10 @@ class HaroListener:
 
     
     def notify(self, found_links):
+        """Notify the notification_email of the links processMessages() found.
+
+        @param found_links List[String]: Links found containing key words/phrases
+        """
         encoded_msg = self.createMessage(found_links)
         try:
             response = self.service.users().messages().send(userId=self.user_id, body=encoded_msg).execute()

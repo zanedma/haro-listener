@@ -6,10 +6,11 @@ import colors
 
 
 class InboxManager:
-    """Gets the necessary label and filter ids for HaroScrubber and creates them if needed
+    """Handles all direct inbox management such as creating/retrieving needed
+    label and filter ids as well as updating/changing message metadata.
 
-        @param service connected Gmail service
-        @param user_id user_id to use for requests
+    @param service: connected Gmail service
+    @param user_id: user_id to use for requests
     """
     def __init__(self, service, user_id):
         self.service = service
@@ -25,7 +26,7 @@ class InboxManager:
     def initInbox(self):
         """Initialize the inbox and return the label and filter ids
 
-            @return Dictionary with label ids and filter id
+        @return Dictionary with label ids and filter id
         """
         print('{} Initializing setup...'.format(getTime()))
         print('{} Initializing Labels...'.format(getTime()))
@@ -163,4 +164,3 @@ class InboxManager:
             return None
 
         return response
-        
