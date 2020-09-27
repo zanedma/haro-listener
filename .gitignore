@@ -2,3 +2,5 @@ token.pickle
 __pycache__/
 .vscode/
 args
+*.command
+JenniferREADME.txt
