@@ -1,2 +1,2 @@
-cd ~/Downloads/harolistener_1.0/
+cd ~/Downloads/haro-listener/
 python3 harolistener.py
