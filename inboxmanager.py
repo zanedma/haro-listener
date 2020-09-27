@@ -49,21 +49,15 @@ class InboxManager:
 
         labels = response['labels']
         labels_dict = {
-            'archive': None,
             'unprocessed': None,
             'processed': None
         }
 
         for label in labels:
-            if label['name'] == '[Imap]/Archive':
-                labels_dict['archive'] = label['id']
-            elif label['name'] == self.needed_labels['unprocessed']:
+            if label['name'] == self.needed_labels['unprocessed']:
                 labels_dict['unprocessed'] = label['id']
             elif label['name'] == self.needed_labels['processed']:
                 labels_dict['processed'] = label['id']
-
-        if labels_dict['archive'] is None:
-            exitWithError('Inbox does not have an archive label')
 
         if labels_dict['unprocessed'] is None:
             unprocessed_id = self._createLabel(self.needed_labels['unprocessed'])
@@ -147,7 +141,6 @@ class InboxManager:
     def markProcessed(self, msg_id, label_ids):
         label_updates = {
             'addLabelIds': [
-                label_ids['archive'],
                 label_ids['processed']
             ],
             'removeLabelIds': [
@@ -162,4 +155,5 @@ class InboxManager:
             colors.printFail('{} Unable to mark message with id {} as processed: {}'.format(getTime(), msg_id, error))
             return None
 
+        colors.printGreen('{} Marked message with id {} as processed'.format(getTime(), msg_id))
         return response

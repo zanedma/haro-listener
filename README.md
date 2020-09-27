@@ -25,6 +25,9 @@ After an email is processed, it will be archived and added to the label "haro_pr
 * Google api python client
   * `pip3 install --upgrade google-api-python-client`
   * `pip install --upgrade google-api-python-client`
+* BeautifulSoup for Python
+  * `pip3 install bs4`
+  * `pip install bs4`
 
 ## Usage
 

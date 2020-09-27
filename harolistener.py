@@ -124,9 +124,9 @@ class HaroListener:
             found_links = messageutils.findLinks(str(msg_body), self.link_keys)
             if len(found_links) > 0:
                 print('{} Found {} links containing key words/phrases'.format(getTime(), len(found_links)))
-                self.notify(found_links)
+                #self.notify(found_links)
             else:
-                print('{} Found 0 links containing key words').format(getTime())
+                print('{} Found 0 links containing key words'.format(getTime()))
 
             self.inbox_manager.markProcessed(msg_id, self.label_ids)
 
