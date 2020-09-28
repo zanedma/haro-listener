@@ -55,7 +55,7 @@ The program will begin logging to the terminal window and, once setup is complet
 
 ### Step 3
 
-To quit the program, navigate back to the terminal window where you ran it and type `Cmd + C` (mac)/`Ctrl + C` (windows/linux) at the same time.
+To quit the program, navigate back to the terminal window where you ran it and type `Ctrl + C` at the same time.
 
 ## Module Descriptions
 
