@@ -35,7 +35,7 @@ def set_params():
     # split the entire file by lines
     lines = args.read().splitlines()
     params = {}
-    params['notification_email'] = lines[0].split(', ')
+    params['notification_emails'] = lines[0].split(', ')
     params['user_email'] = lines[1]
     # all lines after the user_email line should be link keys, combine them
     link_keys = ' '.join(lines[2:])

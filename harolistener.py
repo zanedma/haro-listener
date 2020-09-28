@@ -34,7 +34,7 @@ class HaroListener:
         email message is sent from
         - link_keys List[string]: List of key words and phrases to search for
         in HARO emails
-        - notification_email string: Email address to send the notification to
+        - notification_emails string: Email address to send the notification to
         - user_email string: Email address that receives the HARO emails to be
         scrubbed
     """
@@ -53,10 +53,10 @@ class HaroListener:
             self.link_keys = params['link_keys']
         else:
             exitWithError('missing parameter link_keys')
-        if 'notification_email' in params:
-            self.notification_email = params['notification_email']
+        if 'notification_emails' in params:
+            self.notification_email = params['notification_emails']
         else:
-            exitWithError('missing parameter notification_email')
+            exitWithError('missing parameter notification_emails')
         if 'user_email' in params:
             self.user_email = params['user_email']
         else:
@@ -107,7 +107,7 @@ class HaroListener:
     def processMessages(self, msg_ids):
         """Process all the messages corresponding to the items in msg_ids for
         links containing key words/phrases specified in self.link_keys. If any
-        links are found, call self.notify() to notify the notification_email.
+        links are found, call self.notify() to notify the notification_emails.
 
         @param msg_ids List[String]: msg_ids obtained from getMessages()
         """
@@ -132,28 +132,30 @@ class HaroListener:
 
     
     def notify(self, found_links):
-        """Notify the notification_email of the links processMessages() found.
+        """Notify the notification_emails of the links processMessages() found.
 
         @param found_links List[String]: Links found containing key words/phrases
         """
-        encoded_msg = self.createMessage(found_links)
-        try:
-            response = self.service.users().messages().send(userId=self.user_id, body=encoded_msg).execute()
-        except Exception as error:
-            printFail('{} Error sending notification: {}'.format(getTime(), error))
-            return None
+        for email in self.notification_emails:
+            encoded_msg = self.createMessage(found_links, email)
+            try:
+                response = self.service.users().messages().send(userId=self.user_id, body=encoded_msg).execute()
+            except Exception as error:
+                printFail('{} Error sending notification: {}'.format(getTime(), error))
+                response = None
+            if response is None:
+                printFail('{} Error sending notification email to {}: {}'.format(getTime(), email, error))
+            else:
+                printGreen('{} Successfully sent notification email to {}'.format(getTime(), email))
 
-        printGreen('{} Successfully sent notification message'.format(getTime()))
-        return response
-    
 
-    def createMessage(self, found_links):
+    def createMessage(self, found_links, email):
         msg_text = 'The links containing keywords are:\n'
         links = '\n'.join(found_links)
         msg_text += links
 
         message = MIMEText(msg_text)
-        message['to'] = self.notification_email
+        message['to'] = email
         message['from'] = self.user_email
         message['subject'] = '[HARO Scraper] Found {} links of interest'.format(len(found_links))
         raw_message = base64.urlsafe_b64encode(message.as_bytes())
@@ -187,7 +189,7 @@ def main():
     print('{} Establishing params'.format(getTime()))
     params = set_params()
     params['service'] = service
-    params['user_id'] = 'me'
+    params['user_id'] = 'HaroListener'
     printGreen('{} Successfully established params'.format(getTime()))
 
     listener = HaroListener(params)
