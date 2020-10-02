@@ -54,7 +54,7 @@ class HaroListener:
         else:
             exitWithError('missing parameter link_keys')
         if 'notification_emails' in params:
-            self.notification_email = params['notification_emails']
+            self.notification_emails = params['notification_emails']
         else:
             exitWithError('missing parameter notification_emails')
         if 'user_email' in params:
