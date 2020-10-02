@@ -189,7 +189,7 @@ def main():
     print('{} Establishing params'.format(getTime()))
     params = set_params()
     params['service'] = service
-    params['user_id'] = 'HaroListener'
+    params['user_id'] = 'me'
     printGreen('{} Successfully established params'.format(getTime()))
 
     listener = HaroListener(params)
