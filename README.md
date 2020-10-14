@@ -35,13 +35,13 @@ After an email is processed, it will be archived and added to the label "haro_pr
 
 The program requires a few arguments that should be put in a file name `args` with the following format:
 
-`notification_email`
+`notification_email1, notification_email2, ..., notification_emailN`
 
 `user_email`
 
 `link_key1, link_key2, ..., link_keyN`
 
-In other words, line 1 should only contain the email the HARO notification with found links should be sent to. 
+In other words, line 1 should only contain the emails the notification with found links should be sent to separated by commas. 
 
 Line 2 should only contain the email the HARO emails are sent to and it should be the same email address the user intends to log into in step 2.
 
